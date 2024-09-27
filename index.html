@@ -74,13 +74,13 @@
             const coupon2 = coupon2Input.value || 'COUPON_GOOD';
             const coupon3 = coupon3Input.value || 'COUPON_AVERAGE';
 
-            // Replace the background color
+            // Replace only background or non-essential colors
             gameCode = gameCode.replace(/background-color:\s*#[a-fA-F0-9]{6}/g, `background-color: ${hexColor}`);
 
-            // Replace coupon codes in the game code
-            gameCode = gameCode.replace(/'{{coupon_code_1}}'/g, `"${coupon1}"`);
-            gameCode = gameCode.replace(/'{{coupon_code_2}}'/g, `"${coupon2}"`);
-            gameCode = gameCode.replace(/'{{coupon_code_3}}'/g, `"${coupon3}"`);
+            // Ensure that the coupons in the game code are properly replaced
+            gameCode = gameCode.replace(/"COUPON_BEST"/g, `"${coupon1}"`);
+            gameCode = gameCode.replace(/"COUPON_GOOD"/g, `"${coupon2}"`);
+            gameCode = gameCode.replace(/"COUPON_AVERAGE"/g, `"${coupon3}"`);
 
             // Output the customized code
             outputCode.value = gameCode;
