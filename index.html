@@ -7,186 +7,94 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            margin: 20px;
         }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-        }
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        label {
-            margin: 10px 0 5px;
+        label, input {
             display: block;
-        }
-        input, select, textarea, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+            margin: 10px 0;
         }
         textarea {
-            height: 150px;
-            resize: none;
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
         }
         button {
-            background-color: #28a745;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
+        button:disabled {
+            background-color: #ccc;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Game Code Generator</h1>
-    
-    <label for="gameSelect">Choose a Game:</label>
-    <select id="gameSelect">
-        <option value="runner">Runner Game</option>
-        <option value="catchObjects">Catch Objects Game</option>
-    </select>
+    <h1>Game Code Customizer</h1>
 
-    <label for="colorSelect">Brand Color:</label>
-    <input type="color" id="colorSelect" value="#4CAF50">
+    <label for="hexColor">Enter your custom background hex color:</label>
+    <input type="text" id="hexColor" placeholder="#ff0000">
 
-    <label for="level1Coupon">Coupon for Level 1:</label>
-    <input type="text" id="level1Coupon" placeholder="Enter coupon code for Level 1">
+    <label for="coupon1">Enter Coupon for best performance:</label>
+    <input type="text" id="coupon1" placeholder="COUPON_BEST">
 
-    <label for="level2Coupon">Coupon for Level 2:</label>
-    <input type="text" id="level2Coupon" placeholder="Enter coupon code for Level 2">
+    <label for="coupon2">Enter Coupon for good performance:</label>
+    <input type="text" id="coupon2" placeholder="COUPON_GOOD">
 
-    <label for="level3Coupon">Coupon for Level 3:</label>
-    <input type="text" id="level3Coupon" placeholder="Enter coupon code for Level 3">
+    <label for="coupon3">Enter Coupon for average performance:</label>
+    <input type="text" id="coupon3" placeholder="COUPON_AVERAGE">
 
-    <button id="generateButton">Generate Game Code</button>
+    <label for="gameCode">Paste your game code here:</label>
+    <textarea id="gameCode" placeholder="Paste the game code here"></textarea>
 
-    <label for="generatedCode">Generated Game Code:</label>
-    <textarea id="generatedCode" readonly></textarea>
-</div>
+    <button id="generateButton">Generate Custom Code</button>
 
-<script>
-    document.getElementById('generateButton').addEventListener('click', function () {
-        const gameType = document.getElementById('gameSelect').value;
-        const color = document.getElementById('colorSelect').value;
-        const coupon1 = document.getElementById('level1Coupon').value || 'COUPON1';
-        const coupon2 = document.getElementById('level2Coupon').value || 'COUPON2';
-        const coupon3 = document.getElementById('level3Coupon').value || 'COUPON3';
+    <label for="outputCode">Your customized game code:</label>
+    <textarea id="outputCode" readonly></textarea>
 
-        let gameCode = '';
+    <button id="copyButton" disabled>Copy to Clipboard</button>
 
-        if (gameType === 'runner') {
-            gameCode = `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f0f0; text-align: center; }
-        canvas { background-color: #eee; display: block; margin: 20px auto; }
-        button { padding: 10px; background-color: ${color}; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #333; }
-        .coupon { display: none; }
-    </style>
-</head>
-<body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div class="coupon" id="couponDiv">
-        <p>Coupon: <span id="couponCode"></span></p>
-    </div>
-    <button id="startGame">Start Game</button>
-    <button id="retryGame" style="display:none;">Retry</button>
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let score = 0;
-        let gameRunning = false;
+        const hexColorInput = document.getElementById('hexColor');
+        const coupon1Input = document.getElementById('coupon1');
+        const coupon2Input = document.getElementById('coupon2');
+        const coupon3Input = document.getElementById('coupon3');
+        const gameCodeInput = document.getElementById('gameCode');
+        const generateButton = document.getElementById('generateButton');
+        const outputCode = document.getElementById('outputCode');
+        const copyButton = document.getElementById('copyButton');
 
-        document.getElementById('startGame').addEventListener('click', startGame);
+        generateButton.addEventListener('click', () => {
+            let gameCode = gameCodeInput.value;
+            const hexColor = hexColorInput.value || '#ff0000';
+            const coupon1 = coupon1Input.value || 'COUPON_BEST';
+            const coupon2 = coupon2Input.value || 'COUPON_GOOD';
+            const coupon3 = coupon3Input.value || 'COUPON_AVERAGE';
 
-        function startGame() {
-            gameRunning = true;
-            document.getElementById('startGame').style.display = 'none';
-            document.getElementById('retryGame').style.display = 'block';
-            // Add game logic here
-            displayCoupon(score);
-        }
+            // Replace the background color
+            gameCode = gameCode.replace(/background-color:\s*#[a-fA-F0-9]{6}/g, `background-color: ${hexColor}`);
 
-        function displayCoupon(score) {
-            const coupon = score < 20 ? '${coupon1}' : score < 50 ? '${coupon2}' : '${coupon3}';
-            document.getElementById('couponCode').textContent = coupon;
-            document.getElementById('couponDiv').style.display = 'block';
-        }
+            // Replace coupon codes in the game code
+            gameCode = gameCode.replace(/'{{coupon_code_1}}'/g, `"${coupon1}"`);
+            gameCode = gameCode.replace(/'{{coupon_code_2}}'/g, `"${coupon2}"`);
+            gameCode = gameCode.replace(/'{{coupon_code_3}}'/g, `"${coupon3}"`);
+
+            // Output the customized code
+            outputCode.value = gameCode;
+
+            // Enable the copy button
+            copyButton.disabled = false;
+        });
+
+        copyButton.addEventListener('click', () => {
+            outputCode.select();
+            document.execCommand('copy');
+            alert('Code copied to clipboard!');
+        });
     </script>
-</body>
-</html>`;
-        } else if (gameType === 'catchObjects') {
-            gameCode = `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f0f0; text-align: center; }
-        canvas { background-color: #eee; display: block; margin: 20px auto; }
-        button { padding: 10px; background-color: ${color}; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #333; }
-        .coupon { display: none; }
-    </style>
-</head>
-<body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div class="coupon" id="couponDiv">
-        <p>Coupon: <span id="couponCode"></span></p>
-    </div>
-    <button id="startGame">Start Game</button>
-    <button id="retryGame" style="display:none;">Retry</button>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let score = 0;
-        let gameRunning = false;
-
-        document.getElementById('startGame').addEventListener('click', startGame);
-
-        function startGame() {
-            gameRunning = true;
-            document.getElementById('startGame').style.display = 'none';
-            document.getElementById('retryGame').style.display = 'block';
-            // Add game logic here
-            displayCoupon(score);
-        }
-
-        function displayCoupon(score) {
-            const coupon = score < 10 ? '${coupon1}' : score < 20 ? '${coupon2}' : '${coupon3}';
-            document.getElementById('couponCode').textContent = coupon;
-            document.getElementById('couponDiv').style.display = 'block';
-        }
-    </script>
-</body>
-</html>`;
-        }
-
-        document.getElementById('generatedCode').value = gameCode;
-    });
-</script>
 
 </body>
 </html>
